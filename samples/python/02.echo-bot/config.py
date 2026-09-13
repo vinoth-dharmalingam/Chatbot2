@@ -13,3 +13,6 @@ class DefaultConfig:
     PORT = 3978
     APP_ID = os.environ.get("MicrosoftAppId", "")
     APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "")
+    ENDPOINT_URI=os.environ.get("MicrosoftAIServiceEndpoint", "https://mycog.cognitiveservices.azure.com/")
+    print(f"ENDPOINT_URI={ENDPOINT_URI}")
+    API_KEY = os.environ.get("MicrosoftAIServiceKey", "")
