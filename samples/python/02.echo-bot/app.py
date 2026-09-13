@@ -18,8 +18,13 @@ from botbuilder.schema import Activity, ActivityTypes
 
 from bots import EchoBot
 from config import DefaultConfig
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
 
 CONFIG = DefaultConfig()
+credential = AzureKeyCredential(CONFIG.API_KEY)
+endpointURI=CONFIG.ENDPOINT_URI
+text_analytics_client = TextAnalyticsClient(endpoint=endpointURI, credential=credential)
 
 # Create adapter.
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
@@ -66,6 +71,12 @@ async def messages(req: Request) -> Response:
     # Main bot message handler.
     if "application/json" in req.headers["Content-Type"]:
         body = await req.json()
+        textToUse = body["text"]
+        print(f"Text to use: {textToUse}")
+        documents=[{"id":"1","language":"en","text":body["text"]}]  
+        response = text_analytics_client.analyze_sentiment(documents)
+        sucessful_responses = [doc for doc in response if not doc.is_error]
+        body["text"] = sucessful_responses
     else:
         return Response(status=HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
 
